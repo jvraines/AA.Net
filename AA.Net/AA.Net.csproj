@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="VSOP87\**" />
+    <EmbeddedResource Remove="VSOP87\**" />
+    <None Remove="VSOP87\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Body_abstract.cs" />
+    <Compile Remove="Planet.cs" />
+    <Compile Remove="Strings.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Strings.fr.resx" />
+    <EmbeddedResource Remove="Strings.resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Astronomical Algorithms.pdf" />
+    <None Remove="leap_second.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="leap_second.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>
