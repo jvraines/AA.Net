@@ -288,6 +288,7 @@ namespace AA.Net {
         NextEclipse(double start) {
             double k = Ceiling(Lunation(start) - 0.5) - 0.5;
             var e = Body.FindNextEclipse(k, true);
+            while (e.greatestEclipse < start) e = Body.FindNextEclipse(++k, true);
             double p, t, semiDurPartial = 0, semiDurTotal = 0, semiDurPenumbral;
             double n = 60 / (0.5458 + 0.04 * Cos(e.Mprime));
             double gamma2 = e.gamma * e.gamma;

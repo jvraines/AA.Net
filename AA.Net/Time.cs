@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
@@ -47,14 +48,12 @@ namespace AA.Net {
             double adjust = LeapSecondDates.Where(lsd => lsd.date > first && lsd.date <= last).Sum(lsd => lsd.increment);
             return sum.AddSeconds(sign * adjust);
         }
-
+        
         /// <param name="time">Date and time in the Gregorian calendar.</param>
         /// <returns>Julian Day.</returns>
         public static double JulianDay(this DateTime time) {
-            int Y = time.Year;
-            int M = time.Month;
-            double D = time.Day + time.TimeOfDay.Ticks / (double)TimeSpan.TicksPerDay;
-            return JulianDay(Y, M, D);
+            var ymd = ToJulian(time);
+            return JulianDay(ymd.year, ymd.month, ymd.day + time.TimeOfDay.Ticks / (double)TimeSpan.TicksPerDay);
         }
 
         private static double DaysInGregorianYear(int year) {
@@ -75,6 +74,8 @@ namespace AA.Net {
             return (epochYear - 2000) * 365.25 + J2000;
         }
 
+        private static bool IsBeforeGregorian(int year, int month, double day) => year < 1582 || year == 1582 && (month < 10 || month == 10 && day < 15);
+
         /// <param name="year">Year number.</param>
         /// <param name="month">Month of the year 1-12.</param>
         /// <param name="day">Day of the month including fractional clock time.</param>
@@ -86,7 +87,7 @@ namespace AA.Net {
                 month += 12;
             }
             double A = Floor(year / 100d);
-            double B = year < 1582 || (year == 1582 && (month < 10 || (month == 10 && day < 15))) ? 0 : 2 - A + Floor(A / 4);
+            double B = IsBeforeGregorian(year, month, day) ? 0 : 2 - A + Floor(A / 4);
             return Floor(365.25 * (year + 4716)) + Floor(30.6001 * (month + 1)) + day + B - 1524.5;
         }
 
@@ -271,15 +272,28 @@ namespace AA.Net {
 
         /// <param name="julianDay">A Julian Day.</param>
         /// <param name="fromDynamical">Set True to convert from dynamical time.</param>
-        /// <returns>Date and time in the Gregorian or Julian calendar.</returns>
+        /// <returns>Date and time in the Gregorian calendar.</returns>
         public static DateTime ToDateTime(this double julianDay, bool fromDynamical = false) {
             var ymd = julianDay.ToDate();
-            if (ymd.year < 1 || ymd.year > 9999) throw new ArgumentOutOfRangeException("julianDay", "Evaluates to a year before 1 or after 9999.");
             int day = (int)ymd.day;
             double F = ymd.day - day;
             TimeSpan timeOfDay = TimeSpan.FromTicks((long)(F * TimeSpan.TicksPerDay));
             if (fromDynamical) timeOfDay -= TimeSpan.FromSeconds(DeltaT(ymd.year, ymd.month));
-            return new DateTime(ymd.year, ymd.month, day, timeOfDay.Hours, timeOfDay.Minutes, timeOfDay.Seconds);
+            return ToGregorian(ymd.year, ymd.month, day) + timeOfDay;
+        }
+
+        private static JulianCalendar JC = new JulianCalendar();
+        
+        public static DateTime ToGregorian(int year, int month, int day) {
+            DateTime d;
+            if (IsBeforeGregorian(year, month, day)) d = new DateTime(year, month, day, JC);
+            else d = new DateTime(year, month, day);
+            return d;
+        }
+
+        public static (int year, int month, int day) ToJulian(DateTime time) {
+            if (time < new DateTime(1582, 10, 15)) return (JC.GetYear(time), JC.GetMonth(time), JC.GetDayOfMonth(time));
+            else return (time.Year, time.Month, time.Day);
         }
 
         /// <param name="julianDay">A Julian Day.</param>

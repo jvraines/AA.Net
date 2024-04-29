@@ -501,7 +501,9 @@ namespace AA.Net {
             TimeSpan deltaAlpha1 = ((Cos(epsilon) + Sin(epsilon) * Sin(alpha) * Tan(delta)) * deltaPsi - Cos(alpha) * Tan(delta) * deltaEpsilon).ToRightAscension();
             double deltaDelta1 = Sin(epsilon) * Cos(alpha) * deltaPsi + Sin(alpha) * deltaEpsilon;
             (TimeSpan deltaAlpha2, double deltaDelta2) = Aberration(rightAscension, declination, julianEphemerisDay);
-            return (mean.rightAscension + deltaAlpha1 + deltaAlpha2, mean.declination + deltaDelta1 + deltaDelta2);
+            TimeSpan ra = (mean.rightAscension + deltaAlpha1 + deltaAlpha2).To24Hours();
+            double dec = (mean.declination + deltaDelta1 + deltaDelta2).ToPlusMinus180();
+            return (ra, dec);
         }
 
         private static ArgumentOutOfRangeException coordinate3Exception = new ArgumentOutOfRangeException("Exactly three coordinates must be supplied.");

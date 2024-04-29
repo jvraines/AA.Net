@@ -13,9 +13,8 @@ namespace Tester {
         }
 
         static void Main(string[] args) {
-            DateTime midnight = DateTime.Parse("13 Feb 2024 21:03:24");
-            double jd = midnight.JulianEphemerisDay();
-            Console.WriteLine((midnight - TimeSpan.FromMinutes(Sky.EquationOfTime(jd))).ToLocalTime());
+            var foo = Time.ToJulian(new DateTime(1582, 10, 15));
+            Console.WriteLine(Time.ToGregorian(foo.year, foo.month, foo.day));
         }
     }
 }

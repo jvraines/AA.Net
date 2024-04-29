@@ -88,6 +88,11 @@ namespace AA.Net {
             return degrees % 360;
         }
 
+        /// <returns>Reduce to 24-hour clock.</returns>
+        public static TimeSpan To24Hours(this TimeSpan rightAscension) {
+            return rightAscension.Add(TimeSpan.FromDays(-rightAscension.Days));
+        }
+
         /// <returns>Ecliptical coordinates from equatorial coordinates.</returns>
         /// <remarks>p. 93</remarks>
         public static (double longitude, double latitude)

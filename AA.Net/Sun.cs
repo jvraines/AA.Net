@@ -289,6 +289,7 @@ namespace AA.Net {
         NextEclipse(double start) {
             double k = Ceiling(Moon.Lunation(start) - 0.5) - 1;
             var e = Body.FindNextEclipse(k, false);
+            while (e.greatestEclipse < start) e = Body.FindNextEclipse(++k, false);
             double aGamma = Abs(e.gamma);
             bool central;
             double? mag = null;
