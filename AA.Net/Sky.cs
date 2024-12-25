@@ -406,7 +406,7 @@ namespace AA.Net {
         /// <remarks>pp. 102-103</remarks>
         public static (DateTime? rise, DateTime transit, DateTime? set)
         RiseTransitSet(Bodies body, DateTime date, double longitude, double latitude, bool chronological = true) {
-            DateTime theDate = date.Date.AddDays(chronological ? 1 : 0);
+            DateTime theDate = date.Date.AddDays(chronological && body != Bodies.Sun ? 1 : 0);
             double deltaT = Time.DeltaT(theDate.Year, theDate.Month);
             List<(double rightAscension, double declination)> position = new List<(double, double)>();
             double lastRaD = 0;

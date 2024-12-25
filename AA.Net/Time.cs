@@ -170,7 +170,7 @@ namespace AA.Net {
         /// <returns>The difference between Terrestrial Time and Universal Time in seconds.</returns>
         public static double DeltaT(int year, int month) {
             double y = year + (month - 0.5) / 12;
-            if (y < -1999 || y > 3000) throw new ArgumentOutOfRangeException("Time must be between -1999 and +3000.");
+            //if (y < -1999 || y > 3000) throw new ArgumentOutOfRangeException("Time must be between -1999 and +3000.");
             double u, t;
             if (y < -500) {
                 u = (year - 1820) / 100;
